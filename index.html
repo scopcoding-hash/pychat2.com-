@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pychat — Talk to New People</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background:#050816;
+    color:#ffffff;
+    overflow-x:hidden;
+}
+
+/* =========================
+   BACKGROUND & NAV BAR
+========================= */
+
+body::before{
+    content:"";
+    position:fixed;
+    width:500px;
+    height:500px;
+    left:-200px;
+    top:100px;
+    background:#087cff;
+    opacity:.10;
+    filter:blur(120px);
+    border-radius:50%;
+    pointer-events:none;
+}
+
+body::after{
+    content:"";
+    position:fixed;
+    width:500px;
+    height:500px;
+    right:-200px;
+    top:700px;
+    background:#7b4dff;
+    opacity:.10;
+    filter:blur(120px);
+    border-radius:50%;
+    pointer-events:none;
+}
+
+.navbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 20px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.privacy-link {
+    color: #aebbd3;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: color 0.3s;
+    cursor: pointer;
+}
+
+.privacy-link:hover {
+    color: #14cfff;
+}
+
+/* =========================
+   MAIN CONTAINER
+========================= */
+
+.pychat{
+    width:100%;
+    max-width:1100px;
+    margin:auto;
+    padding:10px 20px 70px;
+    position:relative;
+}
+
+/* =========================
+   LOGO
+========================= */
+
+.logo-section{
+    text-align:center;
+    padding-top:10px;
+    margin-bottom:25px;
+    animation:fadeDown 1s ease;
+}
+
+.logo{
+    width:105px;
+    height:105px;
+    object-fit:contain;
+    border-radius:27px;
+    box-shadow: 0 15px 45px rgba(0,150,255,.25);
+    animation:floatLogo 4s ease-in-out infinite;
+}
+
+@keyframes floatLogo{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-9px); }
+}
+
+/* =========================
+   HERO & DOWNLOAD BUTTON
+========================= */
+
+.hero{
+    text-align:center;
+    padding: 10px 10px 60px;
+}
+
+.hero h1{
+    font-size: clamp(38px,6vw,68px);
+    line-height:1.08;
+    letter-spacing:-2px;
+    margin-bottom:25px;
+}
+
+.gradient{
+    background: linear-gradient(90deg, #14cfff, #4c8dff, #a05cff);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+}
+
+.hero p{
+    max-width:700px;
+    margin:12px auto;
+    color:#aebbd3;
+    font-size:19px;
+    line-height:1.75;
+}
+
+.hero .small{
+    font-size:17px;
+}
+
+/* DOWNLOAD BUTTON STYLES */
+.download-container {
+    margin-top: 30px;
+}
+
+.download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 38px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 10px 30px rgba(0, 114, 255, 0.4);
+    transition: all 0.3s ease;
+}
+
+.download-btn:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 15px 40px rgba(0, 198, 255, 0.6);
+}
+
+/* =========================
+   DIVIDER & SECTIONS
+========================= */
+
+.divider{
+    width:70px;
+    height:4px;
+    margin:35px auto;
+    border-radius:20px;
+    background: linear-gradient(90deg, #10cfff, #765cff);
+}
+
+.section{ padding:75px 0; }
+
+.section-title{
+    text-align:center;
+    margin-bottom:45px;
+}
+
+.section-title h2{
+    font-size: clamp(32px,5vw,48px);
+    margin-bottom:15px;
+    letter-spacing:-1px;
+}
+
+.section-title p{
+    color:#8998b5;
+    font-size:16px;
+    line-height:1.7;
+}
+
+/* =========================
+   FEATURE CARDS
+========================= */
+
+.features{
+    display:grid;
+    grid-template-columns: repeat(2,1fr);
+    gap:20px;
+}
+
+.card{
+    padding:30px;
+    border-radius:24px;
+    background: linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
+    border: 1px solid rgba(255,255,255,.08);
+    transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+    position:relative;
+    overflow:hidden;
+}
+
+.card::before{
+    content:"";
+    position:absolute;
+    width:130px;
+    height:130px;
+    right:-70px;
+    top:-70px;
+    border-radius:50%;
+    background:#159eff;
+    opacity:.08;
+    filter:blur(20px);
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    border-color: rgba(20,190,255,.35);
+    box-shadow: 0 20px 50px rgba(0,0,0,.3);
+}
+
+.card-icon{ font-size:32px; margin-bottom:18px; }
+.card h3{ font-size:22px; margin-bottom:13px; }
+.card p{ color:#9ba9c2; font-size:15px; line-height:1.8; }
+
+/* =========================
+   IMAGE SHOWCASE
+========================= */
+
+.showcase{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:60px;
+    align-items:center;
+    margin-top:30px;
+}
+
+.showcase.reverse .image-box{ order:2; }
+
+.text-box h2{
+    font-size: clamp(30px,4vw,44px);
+    line-height:1.15;
+    margin-bottom:20px;
+}
+
+.text-box p{ color:#9aa8c1; line-height:1.8; font-size:16px; }
+.image-box{ text-align:center; padding:20px; }
+
+.app-image{
+    width:100%;
+    max-width:430px;
+    border-radius:28px;
+    display:block;
+    margin:auto;
+    box-shadow: 0 30px 70px rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.12);
+    transition: transform .5s ease, box-shadow .5s ease;
+}
+
+.app-image:hover{
+    transform: translateY(-8px) scale(1.015);
+    box-shadow: 0 40px 90px rgba(0,130,255,.22);
+}
+
+/* =========================
+   PRIVACY & NOTIFICATIONS
+========================= */
+
+.privacy{
+    text-align:center;
+    padding:65px 30px;
+    border-radius:30px;
+    background: linear-gradient(135deg, rgba(0,130,255,.12), rgba(105,65,255,.10));
+    border: 1px solid rgba(255,255,255,.08);
+    position:relative;
+    overflow:hidden;
+}
+
+.privacy h2{ font-size: clamp(30px,4vw,45px); margin-bottom:20px; }
+.privacy p{ max-width:750px; margin:auto; color:#a5b2ca; line-height:1.85; font-size:16px; }
+
+.notification{
+    text-align:center;
+    max-width:800px;
+    margin:auto;
+    padding:30px;
+    border-radius:25px;
+    background: rgba(255,255,255,.035);
+    border: 1px solid rgba(255,255,255,.08);
+}
+
+.notification h2{ font-size:32px; margin-bottom:17px; }
+.notification p{ color:#9daac2; line-height:1.8; }
+
+/* =========================
+   MAIN FEATURES & FINAL CTA
+========================= */
+
+.main-features{
+    display:grid;
+    grid-template-columns: repeat(3,1fr);
+    gap:14px;
+}
+
+.main-feature{
+    text-align:center;
+    padding:25px 15px;
+    border-radius:20px;
+    background: rgba(255,255,255,.035);
+    border: 1px solid rgba(255,255,255,.07);
+    transition:.3s;
+}
+
+.main-feature:hover{
+    transform:translateY(-6px);
+    border-color: rgba(25,190,255,.3);
+}
+
+.main-feature span{ display:block; font-size:27px; margin-bottom:10px; }
+.main-feature p{ color:#d4def0; font-size:14px; }
+
+.final{
+    text-align:center;
+    padding: 100px 20px 40px;
+}
+
+.final h2{ font-size: clamp(38px,6vw,62px); line-height:1.1; margin-bottom:22px; }
+.final p{ color:#9ba9c1; font-size:18px; line-height:1.7; margin-bottom:35px; }
+
+.pychat-name{
+    font-size:24px;
+    font-weight:bold;
+    letter-spacing:6px;
+    background: linear-gradient(90deg, #12cfff, #875cff);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+}
+
+/* =========================
+   GMAIL CONTACT SECTION
+========================= */
+
+.contact-section {
+    text-align: center;
+    margin: 30px auto 40px;
+    padding: 30px 20px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    max-width: 600px;
+}
+
+.contact-section h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.contact-section p {
+    color: #9ba9c1;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.gmail-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #ea4335;
+    color: #ffffff;
+    padding: 12px 28px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 8px 25px rgba(234, 67, 53, 0.35);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.gmail-btn:hover {
+    transform: translateY(-3px);
+    background: #d93025;
+    box-shadow: 0 12px 30px rgba(234, 67, 53, 0.5);
+}
+
+.footer{
+    text-align:center;
+    padding:35px 10px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    color:#64738f;
+    font-size:13px;
+}
+
+/* =========================
+   PRIVACY POLICY MODAL (POPUP)
+========================= */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(6px);
+}
+
+.modal-content {
+    background-color: #0b112c;
+    margin: 5% auto;
+    padding: 30px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    width: 85%;
+    max-width: 700px;
+    max-height: 80vh;
+    overflow-y: auto;
+    color: #aebbd3;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+}
+
+.modal-content h2 {
+    color: #ffffff;
+    margin-bottom: 8px;
+    font-size: 22px;
+}
+
+.modal-content h3 {
+    color: #14cfff;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.modal-content p {
+    margin-bottom: 12px;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+.modal-content ul {
+    margin-left: 20px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.modal-content ul li {
+    margin-bottom: 5px;
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #fff;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:800px){
+    .features{ grid-template-columns:1fr; }
+    .showcase{ grid-template-columns:1fr; gap:25px; }
+    .showcase.reverse .image-box{ order:0; }
+    .text-box{ text-align:center; }
+    .main-features{ grid-template-columns:1fr 1fr; }
+}
+
+@media(max-width:500px){
+    .navbar { padding: 15px 20px; }
+    .pychat{ padding-left:16px; padding-right:16px; }
+    .logo{ width:90px; height:90px; }
+    .hero{ padding-top:10px; padding-bottom:45px; }
+    .hero h1{ letter-spacing:-1px; }
+    .hero p{ font-size:16px; }
+    .download-btn { font-size: 16px; padding: 14px 28px; }
+    .section{ padding:55px 0; }
+    .card{ padding:25px; }
+    .main-features{ grid-template-columns:1fr; }
+    .privacy{ padding:45px 22px; }
+    .final{ padding-top:75px; }
+}
+
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <a class="privacy-link" onclick="openPrivacyModal()">Privacy Policy</a>
+</nav>
+
+<div class="pychat">
+
+    <div class="logo-section">
+        <img class="logo" src="https://res.cloudinary.com/wnnc8qyc/image/upload/v1788498774/ChatGPT_Image_Sep_4_2026_10_28_16_AM.png" alt="Pychat Logo">
+    </div>
+
+    <div class="hero">
+        <h1>
+            Pychat — 
+            <span class="gradient">Talk to New People, Make New Friends!</span>
+        </h1>
+
+        <p>Do you want to meet new people? 😊</p>
+        <p class="small">Then Pychat can be a new Chatting Experience for you.</p>
+
+        <div class="download-container">
+            <a href="https://raw.githubusercontent.com/scopcoding-hash/pychat/main/my%20pychat.apk" download="pychat.apk" class="download-btn">
+                <span>📲</span> Pychat App Download Now
+            </a>
+        </div>
+
+        <div class="divider"></div>
+    </div>
+
+    <section class="section">
+        <div class="section-title">
+            <h2>🌎 Why Use Pychat?</h2>
+            <p>Discover people, start conversations and make new connections.</p>
+        </div>
+
+        <div class="features">
+            <div class="card">
+                <div class="card-icon">👥</div>
+                <h3>Chat with Random People</h3>
+                <p>View different Users' Profiles and if you like someone, start Chatting directly.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">📧</div>
+                <h3>Chat Without a Phone Number</h3>
+                <p>There is no need to share your Phone Number. Use your Gmail ID to Chat on Pychat.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🔍</div>
+                <h3>Easily Find People</h3>
+                <p>Search for a specific Gmail ID's User and start a Conversation.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🤝</div>
+                <h3>Make New Friends</h3>
+                <p>Meet unfamiliar people, talk to them, and make new friendships.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="showcase">
+            <div class="image-box">
+                <img class="app-image" src="https://res.cloudinary.com/wnnc8qyc/image/upload/v1788498957/ChatGPT_Image_Sep_4_2026_10_45_28_AM.png" alt="Pychat User Dashboard">
+            </div>
+            <div class="text-box">
+                <h2>Discover <span class="gradient">New People</span></h2>
+                <p>Explore different Users' Profiles and discover people you may want to connect with.</p>
+                <p style="margin-top:18px;">Find someone interesting? Open their profile and start a conversation directly.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="showcase reverse">
+            <div class="image-box">
+                <img class="app-image" src="https://res.cloudinary.com/wnnc8qyc/image/upload/v1788499111/ChatGPT_Image_Sep_4_2026_10_48_10_AM.png" alt="Pychat Chat Screen">
+            </div>
+            <div class="text-box">
+                <h2>Start a <span class="gradient">Conversation</span></h2>
+                <p>Found someone you want to talk to?</p>
+                <p style="margin-top:18px;">Simply open their profile and start Chatting directly on Pychat.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="privacy">
+            <h2>🔒 Importance to Privacy</h2>
+            <p>Other Users will not be able to see your Phone Number or personal information.</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="notification">
+            <h2>🔕 No Annoying Chat Notifications</h2>
+            <p>You won't be disturbed by repeated Notifications while studying or working. You can see your new Messages when you open Pychat.</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-title">
+            <h2>✨ Main Features of Pychat</h2>
+        </div>
+
+        <div class="main-features">
+            <div class="main-feature"><span>👥</span><p>Random User Discovery</p></div>
+            <div class="main-feature"><span>👤</span><p>Public User Profiles</p></div>
+            <div class="main-feature"><span>🔍</span><p>Gmail ID Search</p></div>
+            <div class="main-feature"><span>💬</span><p>Direct Chat</p></div>
+            <div class="main-feature"><span>🤝</span><p>My Friends</p></div>
+            <div class="main-feature"><span>🙋</span><p>My Profile</p></div>
+            <div class="main-feature"><span>📧</span><p>Chat Without a Phone Number</p></div>
+            <div class="main-feature"><span>🔕</span><p>No Chat Notifications</p></div>
+            <div class="main-feature"><span>🔒</span><p>Privacy-focused Experience</p></div>
+        </div>
+    </section>
+
+    <section class="final">
+        <h2>🚀 So, Why Wait?</h2>
+        <p>Find new people. Start a conversation. Make new friends.</p>
+        
+        <div class="download-container" style="margin-bottom: 25px;">
+            <a href="https://raw.githubusercontent.com/scopcoding-hash/pychat/main/my%20pychat.apk" download="pychat.apk" class="download-btn">
+                <span>📲</span> Download Pychat APK
+            </a>
+        </div>
+
+        <div class="pychat-name">PYCHAT</div>
+        <div class="divider"></div>
+        <p>Discover People. Start Conversations. Stay Connected.</p>
+    </section>
+
+    <!-- Gmail Contact Section -->
+    <div class="contact-section">
+        <h3>Have Any Questions or Need Support?</h3>
+        <p>Feel free to contact us anytime via Gmail.</p>
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=neemlulululu@gmail.com" target="_blank" rel="noopener noreferrer" class="gmail-btn" onclick="openEmailApp(event)">
+            ✉️ Contact via Gmail
+        </a>
+    </div>
+
+    <div class="footer">
+        © 2026 Pychat — Discover People. Start Conversations. Stay Connected.
+    </div>
+
+</div>
+
+<!-- Privacy Policy & Terms Modal -->
+<div id="privacyModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closePrivacyModal()">&times;</span>
+        
+        <h2>Privacy Policy</h2>
+        <p style="font-size:12px; color:#8998b5;">Last Updated: September 3, 2026</p>
+        <p>Pychat values your privacy. This policy explains how your information is used and protected when you use Pychat.</p>
+
+        <h3>1. What Information We Collect</h3>
+        <p>To use Pychat, we may collect some information as necessary, such as—</p>
+        <ul>
+            <li>Your Gmail ID / Email Address</li>
+            <li>Information in the Profile you create</li>
+            <li>Messages and other Content sent through Pychat</li>
+            <li>Some Technical Information required to operate and secure the app</li>
+        </ul>
+        <p>A Phone Number is not required to use Pychat.</p>
+
+        <h3>2. How Information Is Used</h3>
+        <p>Your information may be used to—</p>
+        <ul>
+            <li>Manage your Pychat Account</li>
+            <li>Provide User Profile and Search features</li>
+            <li>Operate the Chat service</li>
+            <li>Improve the security and functionality of the app</li>
+            <li>Prevent Spam, Abuse, and inappropriate use</li>
+        </ul>
+
+        <h3>3. Profile and Privacy</h3>
+        <p>One of Pychat's main features is that users can view other users' Profiles and start Chatting with them.</p>
+        <p>The information you allow to be displayed on your Profile may be visible to other Pychat users. Therefore, you are advised not to disclose sensitive personal information in your Profile.</p>
+
+        <h3>4. Phone Number</h3>
+        <p>Pychat does not use a Phone Number for Chatting and does not show your Phone Number to other users.</p>
+
+        <h3>5. Notification</h3>
+        <p>No Notification is sent to your phone for Chat Messages on Pychat. To see new Messages, you need to enter the Pychat App.</p>
+
+        <h3>6. Sale of Information</h3>
+        <p>Pychat does not sell your personal information.</p>
+        <p>Information may be used or disclosed when legally required, for security, fraud prevention, or service operation purposes.</p>
+
+        <h3>7. Security</h3>
+        <p>We take reasonable security measures to protect your information. However, no Online Service can guarantee complete security.</p>
+
+        <h3>8. User Safety</h3>
+        <p>When Chatting with strangers, do not share your Password, Bank Information, OTP, complete home address, or other sensitive information.</p>
+
+        <h3>9. Changes to the Policy</h3>
+        <p>This Privacy Policy may be changed as necessary. If there are changes, a new update date will be provided on this page.</p>
+
+        <h3>10. Contact</h3>
+        <p>If you have any questions about the Privacy Policy, please contact us through <strong>neemlulululu@gmail.com</strong> provided on the Pychat Website.</p>
+
+        <hr style="margin:25px 0; border:0; border-top:1px solid rgba(255,255,255,0.1);">
+
+        <h2>Terms & Conditions</h2>
+        <p style="font-size:12px; color:#8998b5;">Last Updated: September 3, 2026</p>
+        <p>By using Pychat, you agree to accept these Terms & Conditions. If you do not agree with these terms, do not use Pychat.</p>
+
+        <h3>1. What is Pychat?</h3>
+        <p>Pychat is a Chat Platform where users can use a Gmail ID without a Phone Number to view other users' Profiles and Chat with them.</p>
+
+        <h3>2. Account</h3>
+        <p>You are responsible for activities carried out through your Account. Creating a Fake Account using another person's identity or impersonating another person is prohibited.</p>
+
+        <h3>3. Prohibited Use</h3>
+        <p>By using Pychat, you may not—</p>
+        <ul>
+            <li>Harass or threaten anyone</li>
+            <li>Send Spam or annoying Messages</li>
+            <li>Impersonate another person</li>
+            <li>Misuse another person's personal information</li>
+            <li>Share illegal or harmful Content</li>
+            <li>Attempt to gain unauthorized access to another person's Account</li>
+            <li>Attempt to damage Pychat's security or services</li>
+        </ul>
+
+        <h3>4. User Content</h3>
+        <p>You are solely responsible for your Profile, Messages, photos, or any other Content.</p>
+        <p>Pychat does not guarantee the authenticity or accuracy of every Content created by users.</p>
+        <p>Content or Accounts that violate the rules may be removed or restricted when necessary.</p>
+
+        <h3>5. Block and Report</h3>
+        <p>If you find a User's behavior inappropriate, you may Block or Report them where this feature is available.</p>
+
+        <h3>6. Changes to the Service</h3>
+        <p>Pychat reserves the right to change, add, discontinue, or improve any Feature in the future.</p>
+
+        <h3>7. Account Termination</h3>
+        <p>Pychat may restrict or terminate an Account if the Terms of Use are violated or if it creates a risk to the safety of other users.</p>
+
+        <h3>8. Changes to the Terms</h3>
+        <p>These Terms & Conditions may be changed as necessary. If you continue to use Pychat after changes are made, you will be considered to have accepted the new Terms & Conditions.</p>
+
+        <h3>9. Contact</h3>
+        <p>If you have any questions about these Terms & Conditions, please contact us through <strong>neemlulululu@gmail.com</strong> provided on the Pychat Website.</p>
+    </div>
+</div>
+
+<script>
+function openPrivacyModal() {
+    document.getElementById('privacyModal').style.display = 'block';
+}
+
+function closePrivacyModal() {
+    document.getElementById('privacyModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    var modal = document.getElementById('privacyModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function openEmailApp(e) {
+    // Mobile devices try to open native mail app first
+    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        e.preventDefault();
+        window.location.href = "mailto:neemlulululu@gmail.com";
+    }
+}
+</script>
+
+</body>
+</html>
